@@ -44,18 +44,10 @@ stages:
     pool: server
     dependsOn: "Deploy"
     steps:
-    - task: InvokeRESTAPI@1
+    - task: ServiceNow-DevOps-Server-Change-Acceleration@1
       inputs:
-        connectionType: 'connectedServiceName'
-        serviceConnection: 'Mohan Azure'
-        method: 'POST'
-        body: |
-          {
-           "buildNumber": "$(build.buildId)",
-           "isMultiBranch": "true",
-           "branchName": "$(build.sourceBranchName)"
-          }
-        waitForCompletion: 'true'
+        connectedServiceName: 'ambs1'
+        UpstreamJob: 'kjdjhagsydu'
 
     - task: Delay@1
       inputs:
