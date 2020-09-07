@@ -7,6 +7,10 @@ stages:
   jobs:
   - job: 'Build'
     steps:
+    - task: ServiceNow-DevOps-Agent-Job-Notification@1
+      inputs:
+        connectedServiceName: 'ambs1'
+        Phase: 'STARTED'
     - task: Bash@3
       inputs:
         targetType: 'inline'
@@ -14,9 +18,18 @@ stages:
           # Write your commands here
           
           echo 'Hello world'
+    - task: ServiceNow-DevOps-Agent-Job-Notification@1
+      inputs:
+        connectedServiceName: 'ambs1'
+        Phase: 'COMPLETED'
   - job: 'Test'
     dependsOn: "Build"
     steps:
+    - task: ServiceNow-DevOps-Agent-Job-Notification@1
+      inputs:
+        connectedServiceName: 'ambs1'
+        upstream: 'Build'
+        Phase: 'STARTED'
     - task: Bash@3
       inputs:
         targetType: 'inline'
@@ -38,6 +51,11 @@ stages:
         testResultsFiles: 'reports/django-basic.xml'
         testRunTitle: '$(Agent.JobName)'
       condition: succeededOrFailed()
+    - task: ServiceNow-DevOps-Agent-Job-Notification@1
+      inputs:
+        connectedServiceName: 'ambs1'
+        upstream: 'Build'
+        Phase: 'COMPLETED'
  
 
 
@@ -46,6 +64,11 @@ stages:
   jobs:
   - job: "Deploy"
     steps:
+    - task: ServiceNow-DevOps-Agent-Job-Notification@1
+      inputs:
+        connectedServiceName: 'ambs1'
+        upstream: 'Test'
+        Phase: 'STARTED'
     - task: Bash@3
       inputs:
         targetType: 'inline'
@@ -53,28 +76,31 @@ stages:
           # Write your commands here.
           
           echo 'Hello world '
+    - task: ServiceNow-DevOps-Agent-Job-Notification@1
+      inputs:
+        connectedServiceName: 'ambs1'
+        upstream: 'Test'
+        Phase: 'COMPLETED'
     
 
   - job: "Prod"
     pool: server
     dependsOn: "Deploy"
     steps:
-    - task: InvokeRESTAPI@1
+    - task: ServiceNow-DevOps-Server-Job-Notification@1
       inputs:
-        connectionType: 'connectedServiceName'
-        serviceConnection: 'Mohan Azure'
-        method: 'POST'
-        body: |
-          {
-           "buildNumber": "$(build.buildId)",
-           "isMultiBranch": "true",
-           "branchName": "$(build.sourceBranchName)"
-          }
-        waitForCompletion: 'true'
-
-    - task: Delay@1
+        connectedServiceName: 'ambs1'
+        UpstreamJob: 'Deploy'
+        Phase: 'STARTED'
+    - task: ServiceNow-DevOps-Server-Change-Acceleration@1
       inputs:
-        delayForMinutes: '0'
+        connectedServiceName: 'ambs1'
+        UpstreamJob: 'cdfcsdd'
+    - task: ServiceNow-DevOps-Server-Job-Notification@1
+      inputs:
+        connectedServiceName: 'ambs1'
+        UpstreamJob: 'Deploy'
+        Phase: 'COMPLETED'
         
 
   
