@@ -68,6 +68,7 @@ stages:
              "stageName": "$(system.jobDisplayName)",
              "branchName": "$(build.sourceBranchName)"
           }
+        artifactToolIdExists: true
     - task: ServiceNow-DevOps-Server-Change-Acceleration@1
       inputs:
         connectedServiceName: 'ambs1'
