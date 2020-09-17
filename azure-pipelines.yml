@@ -37,39 +37,53 @@ stages:
           # Write your commands here
 
           echo 'Hello world'
+
     - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
       inputs:
         connectedServiceName: 'ambs1'
         artifactsPayload: |
           {
-             "artifacts": [
-                {
-                   "name": "artifact1",
-                   "version": "1.$(Build.BuildId)",
-                   "semanticVersion": "1.$(Build.BuildId).0",
-                   "repositoryName": "<artifact repository name>"
-                },
-                {
-                   "name": "artifact2",
-                   "version": "1.$(Build.BuildId)",
-                   "semanticVersion": "1.$(Build.BuildId).0",
-                   "repositoryName": "<artifact repository name>"
-                }
-             ]
+           "artifacts": [
+           {
+           "name": "artifact1",
+           "version": "1.$(Build.BuildId)",
+           "semanticVersion": "1.$(Build.BuildId).0",
+           "repositoryName": "<artifact repository name>"
+           },
+           {
+           "name": "artifact2",
+           "version": "1.$(Build.BuildId)",
+           "semanticVersion": "1.$(Build.BuildId).0",
+           "repositoryName": "<artifact repository name>"
+           }
+           ],
+           "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+           "taskExecutionNumber": "$(build.buildId)",
+           "stageName": "$(system.stageName)/$(system.jobDisplayName)",
+           "branchName": "$(build.sourceBranchName)"
           }
+
     - task: ServiceNow-DevOps-Agent-Package-Registration@1
       inputs:
         connectedServiceName: 'ambs1'
         packageName: 'Agent-Package'
         artifactsPayload: |
           {
+              "name": "Agent-Package",
               "artifacts": [
               {
                   "name": "artifact1",
                   "repositoryName": "<artifact repository name>",
                   "version": "1.$(build.buildId)",
-                  "currentBuildInfo": "true"
-              }]
+                  "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+                  "taskExecutionNumber":"$(build.buildId)",
+                  "stageName":"$(system.stageName)/$(system.jobDisplayName)",
+                  "branchName":"$(build.sourceBranchName)"
+              }],
+              "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+              "taskExecutionNumber":"$(build.buildId)",
+              "stageName":"$(system.stageName)/$(system.jobDisplayName)",
+              "branchName":"$(build.sourceBranchName)"
           }
     - task: ServiceNow-DevOps-Agent-Job-Notification@1
       inputs:
@@ -133,7 +147,7 @@ stages:
              ],
              "pipelineName": "$(system.teamProject)/$(build.definitionName)",
              "taskExecutionNumber": "$(build.buildId)",
-             "stageName": "$(system.jobDisplayName)",
+             "stageName": "$(system.stageName)/$(system.jobDisplayName)",
              "branchName": "$(build.sourceBranchName)"
           },
         artifactToolIdExists: false
@@ -150,12 +164,12 @@ stages:
                   "version": "1.$(build.buildId)",
                   "pipelineName":"$(system.teamProject)/$(build.definitionName)",
                   "taskExecutionNumber":"$(build.buildId)",
-                  "stageName":"$(system.jobDisplayName)",
+                  "stageName":"$(system.stageName)/$(system.jobDisplayName)",
                   "branchName":"$(build.sourceBranchName)"
               }],
               "pipelineName":"$(system.teamProject)/$(build.definitionName)",
               "taskExecutionNumber":"$(build.buildId)",
-              "stageName":"$(system.jobDisplayName)",
+              "stageName":"$(system.stageName)/$(system.jobDisplayName)",
               "branchName":"$(build.sourceBranchName)"
           },
         artifactToolIdExists: false
