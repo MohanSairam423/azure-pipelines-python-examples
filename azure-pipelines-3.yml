@@ -24,6 +24,13 @@ stages:
           # Write your commands here
           
           echo 'Hello world'
+  - job: 'NonBlocking'
+    pool: server
+    dependsOn: "Test"
+    steps:
+      - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+        inputs:
+          connectedServiceName: 'ambs1'
  
 
 
@@ -44,31 +51,6 @@ stages:
     pool: server
     dependsOn: "Deploy"
     steps:
-    - task: ServiceNow-DevOps-Server-Artifact-Registration@1
-      inputs:
-        connectedServiceName: 'ambs1'
-        artifactRegistrationPayload: |
-          {
-             "artifacts": [
-                {
-                   "name": "<artifact name>",
-                   "version": "1.$(build.buildId)",
-                   "semanticVersion": "1.$(build.buildId).0",
-                   "repositoryName": "<artifact repository name>"
-                },
-                {
-                   "name": "<artifact name>",
-                   "version": "1.$(build.buildId)",
-                   "semanticVersion": "1.$(build.buildId).0",
-                   "repositoryName": "<artifact repository name>"
-                }
-             ],
-             "pipelineName": "$(system.teamProject)/$(build.definitionName)",
-             "taskExecutionNumber": "$(build.buildId)",
-             "stageName": "$(system.jobDisplayName)",
-             "branchName": "$(build.sourceBranchName)"
-          }
-        artifactToolIdExists: false
     - task: ServiceNow-DevOps-Server-Change-Acceleration@1
       inputs:
         connectedServiceName: 'ambs1'
