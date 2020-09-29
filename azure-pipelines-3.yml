@@ -28,9 +28,18 @@ stages:
     pool: server
     dependsOn: "Test"
     steps:
-      - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+      - task: InvokeRESTAPI@1
         inputs:
-          connectedServiceName: 'ambs1'
+          connectionType: 'connectedServiceName'
+          serviceConnection: 'Mohan Azure'
+          method: 'POST'
+          body: |
+            {
+                       "buildNumber": "$(build.buildId)",
+                       "isMultiBranch": "true",
+                       "branchName": "$(build.sourceBranchName)"
+                      }
+          waitForCompletion: 'true'
  
 
 
@@ -51,10 +60,18 @@ stages:
     pool: server
     dependsOn: "Deploy"
     steps:
-    - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+    - task: InvokeRESTAPI@1
       inputs:
-        connectedServiceName: 'ambs1'
-        UpstreamJob: 'kjdjhagsydu'
+        connectionType: 'connectedServiceName'
+        serviceConnection: 'Mohan Azure'
+        method: 'POST'
+        body: |
+            {
+                       "buildNumber": "$(build.buildId)",
+                       "isMultiBranch": "true",
+                       "branchName": "$(build.sourceBranchName)"
+                      }
+        waitForCompletion: 'true'
 
     - task: Delay@1
       inputs:
