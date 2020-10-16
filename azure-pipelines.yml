@@ -5,29 +5,6 @@ name: $(Date:yyyyMMdd)$(Rev:.r)
 stages:
 - stage: Build
   jobs:
-  - job: 'Artifact'
-    pool: "server"
-    steps:
-    - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
-      inputs:
-        connectedServiceName: 'devopsdev3_Mohan'
-        artifactsPayload: |
-          {
-             "artifacts": [
-                {
-                   "name": "<artifact name>",
-                   "version": "1.$(Build.BuildId)",
-                   "semanticVersion": "1.$(Build.BuildId).0",
-                   "repositoryName": "<artifact repository name>"
-                },
-                {
-                   "name": "<artifact name>",
-                   "version": "1.$(Build.BuildId)",
-                   "semanticVersion": "1.$(Build.BuildId).0",
-                   "repositoryName": "<artifact repository name>"
-                }
-             ]
-          }
   - job: 'Build'
     steps:
     - task: ServiceNow-DevOps-Agent-Job-Notification@1
